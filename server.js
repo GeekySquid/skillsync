@@ -6,7 +6,26 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const Database = require("better-sqlite3");
+let Database;
+try {
+  Database = require("better-sqlite3");
+} catch (e) {
+  console.error("⚠️ Failed to load better-sqlite3:", e.message);
+  console.warn("⚠️ Using In-Memory Mock Database (No persistence)");
+  Database = class MockDatabase {
+    constructor(path) { console.log("Initializing MockDB at:", path); }
+    exec(sql) { console.log("MockDB exec (ignored):", sql.substring(0, 50) + "..."); }
+    prepare(sql) {
+      return {
+        run: (...args) => { console.log("MockDB run:", args); return { lastInsertRowid: Date.now(), changes: 1 }; },
+        get: (...args) => { console.log("MockDB get:", args); return undefined; },
+        all: (...args) => { console.log("MockDB all:", args); return []; }
+      };
+    }
+    transaction(fn) { return fn; }
+    pragma(sql) { return []; }
+  };
+}
 const fs = require("fs");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
