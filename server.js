@@ -27,7 +27,7 @@ try {
   };
 }
 const fs = require("fs");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
