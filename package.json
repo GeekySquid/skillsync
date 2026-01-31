@@ -7,7 +7,8 @@
     "dev": "node server.js",
     "start": "node server.js",
     "build": "echo 'Build complete'",
-    "deploy": "firebase deploy"
+    "deploy": "firebase deploy",
+    "postinstall": "npm rebuild better-sqlite3"
   },
   "keywords": [
     "edtech",
