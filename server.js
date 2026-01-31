@@ -86,7 +86,28 @@ if (!fs.existsSync(dbDir)) {
 
 const dbPath = path.join(dbDir, "skillsync.db");
 console.log(`Using database at: ${dbPath}`);
-const db = new Database(dbPath);
+let db;
+try {
+  db = new Database(dbPath);
+} catch (e) {
+  console.error("⚠️ Failed to initialize persistent database:", e.message);
+  console.warn("⚠️ Falling back to In-Memory Mock Database");
+  // Re-define MockDatabase if it wasn't defined in the require block (unlikely but safe) or if we need a fresh instance
+  class MockDatabase {
+    constructor(path) { console.log("Initializing MockDB fallback"); }
+    exec(sql) { console.log("MockDB exec (ignored)"); }
+    prepare(sql) {
+      return {
+        run: (...args) => { console.log("MockDB run"); return { lastInsertRowid: Date.now(), changes: 1 }; },
+        get: (...args) => { console.log("MockDB get"); return undefined; },
+        all: (...args) => { console.log("MockDB all"); return []; }
+      };
+    }
+    transaction(fn) { return fn; }
+    pragma(sql) { return []; }
+  };
+  db = new MockDatabase(dbPath);
+}
 
 // Create enhanced tables
 db.exec(`
