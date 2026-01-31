@@ -1452,22 +1452,24 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log("🚀 SkillSync Server Started");
-  console.log(`📍 Server running at http://localhost:${PORT}`);
-  console.log("");
-  console.log("Configuration Status:");
-  console.log(`  Gemini API: ${genAI ? "✅ Configured" : "❌ Not configured"}`);
-  console.log(`  Database: ✅ SQLite (Local)`);
-  console.log("");
-  console.log("Endpoints:");
-  console.log(`  Student Interface: http://localhost:${PORT}`);
-  console.log(`  Admin Dashboard: http://localhost:${PORT}/admin.html`);
-  console.log(`  API Health: http://localhost:${PORT}/api/health`);
-  console.log("");
-  if (!genAI) {
-    console.log("⚠️ Please configure GEMINI_API_KEY in .env file");
-  }
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log("🚀 SkillSync Server Started");
+    console.log(`📍 Server running at http://localhost:${PORT}`);
+    console.log("");
+    console.log("Configuration Status:");
+    console.log(`  Gemini API: ${genAI ? "✅ Configured" : "❌ Not configured"}`);
+    console.log(`  Database: ✅ SQLite (Local)`);
+    console.log("");
+    console.log("Endpoints:");
+    console.log(`  Student Interface: http://localhost:${PORT}`);
+    console.log(`  Admin Dashboard: http://localhost:${PORT}/admin.html`);
+    console.log(`  API Health: http://localhost:${PORT}/api/health`);
+    console.log("");
+    if (!genAI) {
+      console.log("⚠️ Please configure GEMINI_API_KEY in .env file");
+    }
+  });
+}
 
 module.exports = app;
